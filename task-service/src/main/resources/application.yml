@@ -1,0 +1,12 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/popug-tasks?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: password
+
+popug:
+  auth:
+    keySetURI: http://localhost:8080/oauth2/jwks
