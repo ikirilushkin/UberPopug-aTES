@@ -5,5 +5,5 @@ spring:
         enabled: true
   datasource:
     url: jdbc:mysql://localhost:3307/popug-auth?useUnicode=true&characterEncoding=UTF-8
-    username: root
-    password: password
+    username:
+    password:
