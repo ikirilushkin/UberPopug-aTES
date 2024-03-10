@@ -1,13 +1,13 @@
-package com.kirilushkin.aa6.task;
+package com.kirilushkin.aa6.accounting;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TaskServiceApplication {
+public class AccountingServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TaskServiceApplication.class, args);
+        SpringApplication.run(AccountingServiceApplication.class, args);
     }
 
 }

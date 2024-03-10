@@ -1,10 +1,10 @@
-package com.kirilushkin.aa6.task;
+package com.kirilushkin.aa6.accounting;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TaskServiceApplicationTests {
+class AccountingServiceApplicationTests {
 
     @Test
     void contextLoads() {
