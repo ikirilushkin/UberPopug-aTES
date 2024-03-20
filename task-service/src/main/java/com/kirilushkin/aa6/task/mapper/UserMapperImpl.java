@@ -2,6 +2,8 @@ package com.kirilushkin.aa6.task.mapper;
 
 import com.kirilushkin.aa6.task.model.entity.User;
 import com.kirilushkin.aa6.task.model.dto.UserDto;
+import com.kirilushkin.aa6.task.model.event.UserCreated.UserCreatedEventData;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,16 +20,15 @@ public class UserMapperImpl implements UserMapper {
               .role(user.getRole())
               .firstName(user.getFirstName())
               .lastName(user.getLastName())
+              .publicId(user.getPublicId())
               .build();
     }
 
     @Override
-    public User toUser(UserDto source, User target) {
+    public User toUser(UserCreatedEventData source, User target) {
         if (target == null) {
             target = new User();
-        }
-        if (source.getId() != null) {
-            target.setId(source.getId());
+            target.setPublicId(UUID.fromString(source.getPublicId()));
         }
         target.setFirstName(source.getFirstName());
         target.setLastName(source.getLastName());

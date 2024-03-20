@@ -6,7 +6,9 @@ public interface EventProducer {
 
     void sendTask(TaskDto taskDto);
 
-    void reassignTask(TaskDto taskDto);
+    void sendTaskAdded(TaskDto taskDto);
 
-    void changeStatus(TaskDto taskDto);
+    void sendTaskAssigned(TaskDto taskDto);
+
+    void sendTaskCompleted(TaskDto taskDto);
 }

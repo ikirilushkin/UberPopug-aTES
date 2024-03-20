@@ -4,12 +4,15 @@ import com.kirilushkin.aa6.task.mapper.UserMapper;
 import com.kirilushkin.aa6.task.model.entity.User;
 import com.kirilushkin.aa6.task.model.entity.UserRole;
 import com.kirilushkin.aa6.task.model.dto.UserDto;
+import com.kirilushkin.aa6.task.model.event.UserCreated.UserCreatedEventData;
 import com.kirilushkin.aa6.task.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -20,10 +23,12 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public void updateUser(UserDto userDto) {
-        Optional<User> userOptional = userRepository.findById(userDto.getId());
-        User user = userMapper.toUser(userDto, userOptional.orElseGet(User::new));
-        userRepository.save(user);
+    @Transactional
+    public void create(UserCreatedEventData data) {
+        UUID userPublicId = UUID.fromString(data.getPublicId());
+        User user = userRepository.findByPublicId(userPublicId).orElse(new User(userPublicId));
+        User updated = userMapper.toUser(data, user);
+        userRepository.save(updated);
     }
 
     @Override

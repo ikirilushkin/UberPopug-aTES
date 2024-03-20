@@ -10,6 +10,7 @@ import com.kirilushkin.aa6.task.model.exception.NotFoundException;
 import com.kirilushkin.aa6.task.output.EventProducer;
 import com.kirilushkin.aa6.task.repository.TaskRepository;
 import com.kirilushkin.aa6.task.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +37,12 @@ public class TaskServiceImpl implements TaskService {
         task.setStatus(TaskStatus.IN_PROGRESS);
         task.setAssignee(assignee);
         task.setReporter(reporter);
+        task.setPublicId(UUID.randomUUID());
+        task.setCreatedAt(LocalDateTime.now());
         task = taskRepository.save(task);
         TaskDto taskDto = taskMapper.toTaskDto(task);
         eventProducer.sendTask(taskDto);
-        eventProducer.changeStatus(taskDto);
+        eventProducer.sendTaskAdded(taskDto);
     }
 
     @Override
@@ -58,9 +61,9 @@ public class TaskServiceImpl implements TaskService {
         TaskDto updated = taskMapper.toTaskDto(task);
         eventProducer.sendTask(updated);
         if (!status.equals(prevStatus) && TaskStatus.COMPLETED.equals(status)) {
-            eventProducer.changeStatus(updated);
+            eventProducer.sendTaskCompleted(updated);
         } else if (!assignee.equals(prevAssignee)) {
-            eventProducer.reassignTask(updated);
+            eventProducer.sendTaskAssigned(updated);
         }
     }
 

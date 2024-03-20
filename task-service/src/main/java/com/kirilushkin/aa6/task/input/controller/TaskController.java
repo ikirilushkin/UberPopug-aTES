@@ -31,7 +31,7 @@ public class TaskController {
         taskService.update(taskDto);
     }
 
-    @PostMapping
+    @PostMapping("/shuffle")
     public void shuffleTasks() {
         taskShufflingService.shuffleTasks();
     }

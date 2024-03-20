@@ -17,8 +17,10 @@ public class TaskMapperImpl implements TaskMapper {
               .id(task.getId())
               .description(task.getDescription())
               .createdAt(task.getCreatedAt())
+              .status(task.getStatus())
               .assignee(userMapper.toUserDto(task.getAssignee()))
               .reporter(userMapper.toUserDto(task.getReporter()))
+              .publicId(task.getPublicId())
               .build();
     }
 }
