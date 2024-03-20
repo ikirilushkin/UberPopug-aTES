@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kirilushkin.SchemaValidator;
 import com.kirilushkin.aa6.accounting.model.event.BaseEvent;
 import com.kirilushkin.aa6.accounting.model.event.TaskAdded;
+import com.kirilushkin.aa6.accounting.model.event.TaskAssigned;
+import com.kirilushkin.aa6.accounting.model.event.TaskCompleted;
 import com.kirilushkin.aa6.accounting.model.event.TaskCreated;
 import com.kirilushkin.aa6.accounting.model.event.UserCreated;
 import com.kirilushkin.aa6.accounting.service.AccountService;
@@ -26,18 +28,32 @@ public class EventConsumerImpl implements EventConsumer {
 
     @Override
     @KafkaListener(topics = "users-stream")
-    public void onUserCreated(UserCreated event) {
+    public void onUserSaved(UserCreated event) {
         receive(event, "auth/UserCreated/1.json", o -> accountService.saveAccount(event.getData()));
     }
 
     @Override
-    public void onTaskCreated(TaskCreated event) {
-        taskService.createTask(event.getData());
+    @KafkaListener(topics = "tasks-stream")
+    public void onTaskSaved(TaskCreated event) {
+        receive(event, "task/TaskCreated/1.json", o -> taskService.createTask(event.getData()));
     }
 
     @Override
+    @KafkaListener(topics = "tasks-added")
     public void onTaskAdded(TaskAdded event) {
-        taskService.addTaskToUser(event.getData());
+        receive(event, "task/TaskAdded/1.json", o -> taskService.addTaskToUser(event.getData()));
+    }
+
+    @Override
+    @KafkaListener(topics = "tasks-assigned")
+    public void onTaskAssigned(TaskAssigned event) {
+        receive(event, "task/TaskAssigned/1.json", o -> taskService.assignTaskToUser(event.getData()));
+    }
+
+    @Override
+    @KafkaListener(topics = "tasks-completed")
+    public void onTaskCompleted(TaskCompleted event) {
+        receive(event, "task/TaskCompleted/1.json", o -> taskService.completeTask(event.getData()));
     }
 
     private <T extends BaseEvent> void receive(T event, String schema, Consumer<Object> consumer) {

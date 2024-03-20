@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,4 +32,20 @@ public class Task {
     The amount added to an assignee
      */
     private Double refill;
+
+    public Task() {
+    }
+
+    public Task(UUID publicId) {
+        this.publicId = publicId;
+    }
+
+    public boolean arePricesGenerated() {
+        return Objects.isNull(this.withdraw) || Objects.isNull(this.refill);
+    }
+
+    public void setPrices(Double withdraw, Double refill) {
+        this.withdraw = withdraw;
+        this.refill = refill;
+    }
 }

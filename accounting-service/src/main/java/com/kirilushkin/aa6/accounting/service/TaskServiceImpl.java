@@ -8,6 +8,7 @@ import com.kirilushkin.aa6.accounting.model.event.TaskCompleted.TaskCompletedEve
 import com.kirilushkin.aa6.accounting.model.event.TaskCreated.TaskCreatedEventData;
 import com.kirilushkin.aa6.accounting.model.exception.NotFoundException;
 import com.kirilushkin.aa6.accounting.repository.TaskRepository;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,29 +26,40 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void createTask(TaskCreatedEventData event) {
-        TaskCosts costs = taskCostsService.generate();
-        Task task = new Task();
-        task.setPublicId(UUID.fromString(event.getPublicId()));
-        task.setDescription(event.getDescription());
-        task.setWithdraw(costs.getWithdraw());
-        task.setRefill(costs.getRefill());
+    public void createTask(TaskCreatedEventData data) {
+        UUID publicId = UUID.fromString(data.getPublicId());
+        Task task = taskRepository.findByPublicId(publicId).orElse(new Task(publicId));
+        task.setDescription(data.getDescription());
+        if (!task.arePricesGenerated()) {
+            TaskCosts costs = taskCostsService.generate();
+            task.setPrices(costs.getWithdraw(), costs.getRefill());
+        }
         taskRepository.save(task);
     }
 
     @Override
-    public void addTaskToUser(TaskAddedEventData event) {
-        UUID accountId = UUID.fromString(event.getAssignee());
-        Task task = taskRepository.findByPublicId(UUID.fromString(event.getPublicId()))
-              .orElseThrow(() -> new NotFoundException("Task", event.getPublicId()));
+    public void addTaskToUser(TaskAddedEventData data) {
+        UUID accountId = UUID.fromString(data.getAssignee());
+        UUID publicId = UUID.fromString(data.getPublicId());
+        Optional<Task> taskOptional = taskRepository.findByPublicId(publicId);
+        // todo
+        while (taskOptional.isEmpty()) {
+            log.info("Task {} is not received yet...waiting", publicId);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Error when adding a task");
+            }
+        }
+        Task task = taskOptional.get();
         transactionService.withdrawFrom(accountId, task.getWithdraw());
     }
 
     @Override
-    public void assignTaskToUser(TaskAssignedEventData event) {
-        UUID accountId = UUID.fromString(event.getAssignee());
-        Task task = taskRepository.findByPublicId(UUID.fromString(event.getPublicId()))
-              .orElseThrow(() -> new NotFoundException("Task", event.getPublicId()));
+    public void assignTaskToUser(TaskAssignedEventData data) {
+        UUID accountId = UUID.fromString(data.getAssignee());
+        UUID publicId = UUID.fromString(data.getPublicId());
+        Task task = taskRepository.findByPublicId(publicId).orElseThrow(() -> new NotFoundException("Task", publicId));
         transactionService.withdrawFrom(accountId, task.getWithdraw());
     }
 

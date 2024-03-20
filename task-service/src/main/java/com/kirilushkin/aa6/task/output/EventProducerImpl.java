@@ -6,6 +6,8 @@ import com.kirilushkin.aa6.task.model.dto.TaskDto;
 import com.kirilushkin.aa6.task.model.event.BaseEvent;
 import com.kirilushkin.aa6.task.model.event.TaskAdded;
 import com.kirilushkin.aa6.task.model.event.TaskAdded.TaskAddedEventData;
+import com.kirilushkin.aa6.task.model.event.TaskAssigned;
+import com.kirilushkin.aa6.task.model.event.TaskAssigned.TaskAssignedEventData;
 import com.kirilushkin.aa6.task.model.event.TaskCompleted;
 import com.kirilushkin.aa6.task.model.event.TaskCompleted.TaskCompletedEventData;
 import com.kirilushkin.aa6.task.model.event.TaskCreated;
@@ -59,13 +61,13 @@ public class EventProducerImpl implements EventProducer {
 
     @Override
     public void sendTaskAssigned(TaskDto taskDto) {
-        TaskCompleted event = new TaskCompleted();
+        TaskAssigned event = new TaskAssigned();
         event.setEventId(UUID.randomUUID().toString());
         event.setEventName("TaskAssigned");
         event.setEventVersion(1);
         event.setEventTime(LocalDateTime.now());
         event.setEventProducer(PRODUCER);
-        event.setData(new TaskCompletedEventData(taskDto.getPublicId(), taskDto.getAssignee().getPublicId()));
+        event.setData(new TaskAssignedEventData(taskDto.getPublicId(), taskDto.getAssignee().getPublicId()));
 
         send(event, "task/TaskAssigned/1.json", "tasks-assigned");
     }
