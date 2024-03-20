@@ -8,17 +8,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "payments")
 @Getter
 @Setter
-public class Transaction {
+public class Payment {
 
     @Id
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -28,30 +28,18 @@ public class Transaction {
     private UUID publicId;
 
     @Enumerated(EnumType.STRING)
-    private TransactionStatus status;
+    private PaymentStatus status;
 
-    @Enumerated(EnumType.STRING)
-    private TransactionType type;
+    @ManyToOne
+    @JoinColumn(name = "account")
+    private Account account;
 
     private Double amount;
 
-    private LocalDateTime startedAt;
+    @Column(name = "payment_for")
+    private LocalDate paymentFor;
 
-    private LocalDateTime completedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "account_from")
-    private Account from;
-
-    @ManyToOne
-    @JoinColumn(name = "account_to")
-    private Account to;
-
-    public enum TransactionStatus {
+    public enum PaymentStatus {
         ACTIVE, COMPLETED, UNCOMPLETED
-    }
-
-    public enum TransactionType {
-        WITHDRAWAL, ENROLLMENT, PAYMENT
     }
 }

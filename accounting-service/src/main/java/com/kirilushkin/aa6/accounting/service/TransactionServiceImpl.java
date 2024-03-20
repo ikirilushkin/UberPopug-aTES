@@ -33,6 +33,8 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setPublicId(UUID.randomUUID());
         transaction.setStatus(TransactionStatus.COMPLETED);
         transactionRepository.save(transaction);
+        accountFrom.changeBalance(-amount);
+        accountRepository.save(accountFrom);
     }
 
     @Override
@@ -47,10 +49,12 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setPublicId(UUID.randomUUID());
         transaction.setStatus(TransactionStatus.COMPLETED);
         transactionRepository.save(transaction);
+        accountTo.changeBalance(amount);
+        accountRepository.save(accountTo);
     }
 
     @Override
-    public void proceedPaymentFor(UUID accountPublicId) {
+    public void proceedPaymentFor(UUID accountPublicId, Double amount) {
         Account account = accountRepository.findByPublicId(accountPublicId)
               .orElseThrow(() -> new NotFoundException("Account", accountPublicId));
         if (account.getBalance() > 0) {
@@ -61,10 +65,10 @@ public class TransactionServiceImpl implements TransactionService {
             transaction.setPublicId(UUID.randomUUID());
             transaction.setStatus(TransactionStatus.ACTIVE);
             transactionRepository.save(transaction);
-            account.setBalance(0.0);
-            accountRepository.save(account);
             transaction.setStatus(TransactionStatus.COMPLETED);
             transactionRepository.save(transaction);
+            account.setBalance(0.0);
+            accountRepository.save(account);
         }
     }
 }

@@ -32,7 +32,7 @@ public class Account {
 
     private String email;
 
-    private Double balance;
+    private Double balance = 0.0;
 
     public Account() {
     }
@@ -40,5 +40,13 @@ public class Account {
     public Account(UUID publicId, Double balance) {
         this.publicId = publicId;
         this.balance = balance;
+    }
+
+    public synchronized Double getBalance() {
+        return this.balance;
+    }
+
+    public synchronized void changeBalance(Double amount) {
+        this.balance += amount;
     }
 }

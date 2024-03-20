@@ -8,5 +8,5 @@ public interface TransactionService {
 
     void enrollTo(UUID accountPublicId, Double amount);
 
-    void proceedPaymentFor(UUID accountPublicId);
+    void proceedPaymentFor(UUID accountPublicId, Double amount);
 }
