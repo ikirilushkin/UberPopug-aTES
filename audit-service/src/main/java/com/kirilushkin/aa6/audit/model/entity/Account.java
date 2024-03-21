@@ -2,8 +2,6 @@ package com.kirilushkin.aa6.audit.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -13,15 +11,18 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name = "users")
+@Table(name = "accounts")
 @Getter
 @Setter
-public class User {
+public class Account {
 
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
+
+    @Column(name = "public_id")
+    private UUID publicId;
 
     @Column(name = "first_name")
     private String firstName;
@@ -31,16 +32,10 @@ public class User {
 
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
-
-    @Column(name = "public_id")
-    private UUID publicId;
-
-    public User() {
+    public Account() {
     }
 
-    public User(UUID publicId) {
+    public Account(UUID publicId) {
         this.publicId = publicId;
     }
 }

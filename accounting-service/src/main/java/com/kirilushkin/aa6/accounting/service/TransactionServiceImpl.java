@@ -5,6 +5,7 @@ import com.kirilushkin.aa6.accounting.model.entity.Transaction;
 import com.kirilushkin.aa6.accounting.model.entity.Transaction.TransactionStatus;
 import com.kirilushkin.aa6.accounting.model.entity.Transaction.TransactionType;
 import com.kirilushkin.aa6.accounting.model.exception.NotFoundException;
+import com.kirilushkin.aa6.accounting.output.EventProducer;
 import com.kirilushkin.aa6.accounting.repository.AccountRepository;
 import com.kirilushkin.aa6.accounting.repository.TransactionRepository;
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
+    private final EventProducer eventProducer;
 
     @Override
     @Transactional
