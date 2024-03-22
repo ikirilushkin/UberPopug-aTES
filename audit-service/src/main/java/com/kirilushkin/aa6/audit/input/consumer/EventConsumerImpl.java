@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kirilushkin.SchemaValidator;
 import com.kirilushkin.aa6.audit.model.event.BaseEvent;
 import com.kirilushkin.aa6.audit.model.event.PaymentCompleted;
+import com.kirilushkin.aa6.audit.model.event.TaskPriceCalculated;
 import com.kirilushkin.aa6.audit.model.event.TransactionApplied;
 import com.kirilushkin.aa6.audit.model.event.UserCreated;
 import com.kirilushkin.aa6.audit.service.AccountService;
+import com.kirilushkin.aa6.audit.service.TaskService;
 import com.kirilushkin.aa6.audit.service.TransactionService;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class EventConsumerImpl implements EventConsumer {
 
     private final AccountService accountService;
     private final TransactionService transactionService;
+    private final TaskService taskService;
     private final SchemaValidator schemaValidator;
     private final ObjectMapper objectMapper;
 
@@ -40,6 +43,12 @@ public class EventConsumerImpl implements EventConsumer {
     @KafkaListener(topics = "payments-completed")
     public void onPaymentCompleted(PaymentCompleted event) {
         receive(event, "task/PaymentCompleted/1.json", o -> transactionService.savePayment(event.getData()));
+    }
+
+    @Override
+    @KafkaListener(topics = "tasks-price-calculated")
+    public void onTaskPriceCalculated(TaskPriceCalculated event) {
+        receive(event, "task/TaskPriceCalculated/1.json", o -> taskService.saveTask(event.getData()));
     }
 
     private <T extends BaseEvent> void receive(T event, String schema, Consumer<Object> consumer) {

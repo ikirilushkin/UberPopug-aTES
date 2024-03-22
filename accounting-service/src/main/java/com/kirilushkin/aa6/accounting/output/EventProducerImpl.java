@@ -44,7 +44,7 @@ public class EventProducerImpl implements EventProducer {
                                                        task.getRefill())
         );
 
-        send(event, "task/TaskPriceCalculated/1.json", "transactions-applied");
+        send(event, "task/TaskPriceCalculated/1.json", "tasks-price-calculated");
     }
 
     @Override
