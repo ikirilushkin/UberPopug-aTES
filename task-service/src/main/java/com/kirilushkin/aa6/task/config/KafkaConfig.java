@@ -28,7 +28,8 @@ public class KafkaConfig {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        configProps.put(JsonSerializer.TYPE_MAPPINGS, "task:com.kirilushkin.aa6.auth.model.dto.TaskDto");
+        configProps.put(JsonSerializer.TYPE_MAPPINGS,
+                        "taskCreated:com.kirilushkin.aa6.task.model.event.TaskCreated,taskAdded:com.kirilushkin.aa6.task.model.event.TaskAdded,taskCreated:com.kirilushkin.aa6.task.model.event.TaskCreated,taskCompleted:com.kirilushkin.aa6.task.model.event.TaskCompleted");
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
@@ -41,10 +42,10 @@ public class KafkaConfig {
     public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "group");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "task-group");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TYPE_MAPPINGS, "user:com.kirilushkin.aa6.task.model.dto.UserDto");
+        props.put(JsonDeserializer.TYPE_MAPPINGS, "userCreated:com.kirilushkin.aa6.task.model.event.UserCreated");
         return new DefaultKafkaConsumerFactory<>(props);
     }
 

@@ -17,6 +17,7 @@ public class UserDto {
     private UserRole role;
     private Boolean deleted;
     private String password;
+    private UUID publicId;
 
     public static UserDto create() {
         return UserDto.builder()

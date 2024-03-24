@@ -16,4 +16,5 @@ public class TaskDto {
     private LocalDateTime createdAt;
     private UserDto assignee;
     private UserDto reporter;
+    private UUID publicId;
 }

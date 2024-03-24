@@ -36,6 +36,7 @@ public class UserServiceImpl implements UserService {
         user.setDeleted(false);
         user.setRole(UserRole.USER);
         user.setPassword(userDto.getPassword());
+        user.setPublicId(UUID.randomUUID());
         user = userRepository.save(user);
         UserDto created = mapper(user);
         producer.sendUser(created);
@@ -89,6 +90,7 @@ public class UserServiceImpl implements UserService {
               .email(user.getEmail())
               .role(user.getRole())
               .deleted(user.isDeleted())
+              .publicId(user.getPublicId())
               .build();
     }
 }
